@@ -1,0 +1,3 @@
+yarik@yarik-7720:~/REST$ gulp
+http://localhost:8000/api/books
+[{"_id":"5982fdd37dd3f02951b0c96a","title":"A Journey","genre":"Science","author":"I","read":false},{"_id":"5982ff257dd3f02951b0c96b","title":"Childhood","genre":"Biography","author":"Lev","read":false},{"_id":"5982ffe4209d1df7b4c1ffde","title":"The Dark","genre":"Scrin Fict","author":"Jules","read":false}]
