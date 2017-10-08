@@ -24,30 +24,62 @@ var routes = function(Book){
                res.json(books);
           });
       });
-
+  bookRouter.use('/:bookId', function(reg,res,next){
+    Book.findById(reg.params.bookId, function(err,book){
+      if(err)
+         res.status(500).send(err);
+      else if(book)
+        {
+          reg.book = book;
+          next();
+        }
+        else
+        {
+           res.status(404).send('no book found');
+        }
+    });
+  });
   bookRouter.route('/:bookId')
       .get(function(reg,res){
-
-          Book.findById(reg.params.bookId, function(err,book){
-            if(err)
-               res.status(500).send(err);
-            else
-               res.json(book);
-          });
+          res.json(reg.book);
       })
       .put(function(reg,res){
-        Book.findById(reg.params.bookId, function(err,book){
-          if(err)
-             res.status(500).send(err);
-          else
-             book.title = reg.body.title;
-             book.author = reg.body.author;
-             book.genre = reg.body.genre;
-             book.read = reg.body.read;
-             book.save();
-             res.json(book);
-        });
+             reg.book.title = reg.body.title;
+             reg.book.author = reg.body.author;
+             reg.book.genre = reg.body.genre;
+             reg.book.read = reg.body.read;
+             reg.book.save(function(err){
+               if(err)
+                 res.status(500).send(err);
+               else{
+                 res.json(reg.book);
+               }
+           });
+      })
+      .patch(function(reg,res){
+        if (reg.body._id)
+           delete reg.body._id;
+        for (var p in reg.body)
+        {
+          reg.book[p] = reg.body[p];
+        }
+      reg.book.save(function(err){
+        if(err)
+           res.status(500).send(err);
+        else{
+           res.json(reg.book);
+        }
       });
-      return bookRouter;
+    })
+    .delete(function(reg,res){
+      reg.book.remove(function(err){
+        if(err)
+           res.status(500).send(err);
+        else{
+           res.status(204).send('Removed');
+        }
+      });
+    });
+  return bookRouter;
 };
 module.exports = routes;
